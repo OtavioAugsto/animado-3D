@@ -178,6 +178,30 @@
         letter-spacing: 0.04em;
         text-shadow: 0 2px 12px rgba(0,0,0,0.85);
       }
+
+      /* ---------- mobile (não altera o desktop) ---------- */
+      @supports (height: 100dvh) {
+        .hero { height: 100dvh; }
+      }
+      @media (max-width: 820px) {
+        /* personagem dimensionado pela LARGURA da tela (não estoura mais) */
+        .character {
+          height: auto;
+          width: min(88vw, 62dvh);
+          top: 52%;
+        }
+        /* título mais alto e com respiro */
+        .title-block { top: 14%; gap: 1.2vh; }
+        .title-block h1, .title-wrap h1 { font-size: 17vw; }
+        .title-block .subtitle { font-size: 4.6vw; letter-spacing: 0.14em; }
+        .title-block .rule { width: 92vw; }
+        /* rodapé com quebra de linha permitida */
+        .footer { bottom: 3.5%; padding: 0 18px; }
+        .footer .tagline { font-size: 13px; }
+        .footer .em-breve { font-size: 11px; letter-spacing: 0.35em; }
+        /* teia um pouco mais discreta em tela pequena */
+        .character .web-svg { opacity: 0.9; }
+      }
     </style>
   </head>
   <body>
@@ -279,14 +303,20 @@
         hero.style.setProperty("--light-x", (nx * 100) + "%");
         hero.style.setProperty("--light-y", (ny * 100) + "%");
       });
+      // com mouse: hover anoitece; no toque (sem hover): tap alterna dia/noite
+      const canHover = window.matchMedia("(hover: hover)").matches;
+      if (!canHover) {
+        hero.addEventListener("click", () => hero.classList.toggle("is-day"));
+      }
+
       // ordem invertida: dia é o padrão; a noite chega no hover
       hero.addEventListener("mouseenter", () => {
         hero.classList.add("is-hover");
-        if (DAY_ON_HOVER) hero.classList.remove("is-day");
+        if (DAY_ON_HOVER && canHover) hero.classList.remove("is-day");
       });
       hero.addEventListener("mouseleave", () => {
         hero.classList.remove("is-hover");
-        hero.classList.add("is-day");
+        if (canHover) hero.classList.add("is-day");
         hero.style.setProperty("--bg-x", "0px");
         hero.style.setProperty("--bg-y", "0px");
         hero.style.setProperty("--ch-x", "0px");
